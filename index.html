@@ -15,7 +15,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/style.css">
 
@@ -52,8 +52,11 @@
 <header class="site-header" id="top">
   <div class="container header-inner">
     <a class="brand" href="#top">
-      <span class="brand-name">Studio Legale</span>
-      <span class="brand-surname">Fussone</span>
+      <span class="monogram" aria-hidden="true">GF</span>
+      <span class="brand-text">
+        <span class="brand-name">Studio Legale</span>
+        <span class="brand-surname">Fussone</span>
+      </span>
     </a>
 
     <nav class="main-nav" id="main-nav" aria-label="Navigazione principale">
@@ -67,7 +70,7 @@
     </nav>
 
     <div class="header-actions">
-      <a href="#contatti" class="btn btn-primary btn-pill btn-small">Richiedi una consulenza</a>
+      <a href="#contatti" class="btn btn-on-dark btn-pill btn-small">Richiedi una consulenza</a>
       <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Apri il menu">
         <span></span><span></span><span></span>
       </button>
@@ -85,12 +88,12 @@
         <h1>Al tuo fianco, con competenza e concretezza.</h1>
         <p class="hero-subtitle">Assistenza e consulenza legale per privati, professionisti e imprese, a San Cataldo e su tutto il territorio nazionale.</p>
         <div class="hero-actions">
-          <a href="#contatti" class="btn btn-primary btn-pill">Richiedi una consulenza</a>
-          <a href="#aree" class="btn btn-outline btn-pill">Scopri le aree di attività</a>
+          <a href="#contatti" class="btn btn-on-dark btn-pill">Richiedi una consulenza</a>
+          <a href="#aree" class="btn btn-outline-dark btn-pill">Scopri le aree di attività</a>
         </div>
       </div>
       <div class="hero-media">
-        <div class="placeholder-frame" role="img" aria-label="Immagine dello Studio Legale Fussone, in attesa di fotografia definitiva">
+        <div class="placeholder-frame placeholder-frame-dark" role="img" aria-label="Immagine dello Studio Legale Fussone, in attesa di fotografia definitiva">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
             <rect x="3" y="3" width="18" height="18" rx="1"></rect>
             <circle cx="8.5" cy="9" r="1.5"></circle>
@@ -106,14 +109,23 @@
   <section class="highlights">
     <div class="container highlights-grid">
       <div class="highlight">
+        <span class="highlight-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8.5" cy="8" r="2.5"></circle><circle cx="16" cy="9" r="2"></circle><path d="M3.5 19c0-3 2.2-5 5-5s5 2 5 5"></path><path d="M13.5 19c0-2.2 1.6-4 4-4s4 1.8 4 4"></path></svg>
+        </span>
         <h3>Approccio multidisciplinare</h3>
         <p>Il supporto di più professionisti per una consulenza completa.</p>
       </div>
       <div class="highlight">
+        <span class="highlight-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg>
+        </span>
         <h3>Ascolto e attenzione</h3>
         <p>Un rapporto diretto con il cliente in ogni fase della pratica.</p>
       </div>
       <div class="highlight">
+        <span class="highlight-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-6-5.2-6-10a6 6 0 0 1 12 0c0 4.8-6 10-6 10z"></path><circle cx="12" cy="11" r="2"></circle></svg>
+        </span>
         <h3>Assistenza sul territorio nazionale</h3>
         <p>Da San Cataldo, un supporto esteso a tutta Italia.</p>
       </div>
@@ -142,7 +154,7 @@
   </section>
 
   <!-- AREE DI ATTIVITÀ -->
-  <section class="section section-alt" id="aree">
+  <section class="section section-dark" id="aree">
     <div class="container">
       <div class="section-heading">
         <p class="eyebrow">Competenze</p>
@@ -227,7 +239,7 @@
       </div>
 
       <details class="more-competences">
-        <summary class="btn btn-outline btn-pill">Scopri tutte le competenze</summary>
+        <summary class="btn btn-outline-dark btn-pill">Scopri tutte le competenze</summary>
         <div class="more-competences-body">
           <ul class="competence-list">
             <li><strong>Diritto civile:</strong> contratti, responsabilità civile, controversie, locazioni, sfratti, risarcimento danni.</li>
@@ -253,22 +265,22 @@
       </div>
       <ol class="steps">
         <li class="step">
-          <span class="step-number">01</span>
+          <span class="step-badge">01</span>
           <h3>Ascolto</h3>
           <p>Il primo incontro è dedicato alla comprensione della situazione e delle esigenze del cliente.</p>
         </li>
         <li class="step">
-          <span class="step-number">02</span>
+          <span class="step-badge">02</span>
           <h3>Analisi</h3>
           <p>Lo Studio esamina la documentazione e valuta gli strumenti giuridici disponibili.</p>
         </li>
         <li class="step">
-          <span class="step-number">03</span>
+          <span class="step-badge">03</span>
           <h3>Strategia</h3>
           <p>Viene individuato il percorso più adeguato, illustrando con chiarezza le possibili azioni.</p>
         </li>
         <li class="step">
-          <span class="step-number">04</span>
+          <span class="step-badge">04</span>
           <h3>Assistenza</h3>
           <p>Il cliente viene seguito con continuità durante ogni fase della pratica.</p>
         </li>
@@ -277,10 +289,10 @@
   </section>
 
   <!-- AVVOCATO -->
-  <section class="section section-alt" id="avvocato">
+  <section class="section section-dark" id="avvocato">
     <div class="container avvocato-inner">
       <div class="avvocato-media">
-        <div class="placeholder-frame placeholder-portrait" role="img" aria-label="Fotografia dell'Avv. Giuseppe Fussone, in attesa di fotografia definitiva">
+        <div class="placeholder-frame placeholder-frame-dark placeholder-portrait" role="img" aria-label="Fotografia dell'Avv. Giuseppe Fussone, in attesa di fotografia definitiva">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
             <circle cx="12" cy="8.5" r="3.5"></circle>
             <path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"></path>
@@ -420,8 +432,13 @@
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <span class="brand-name">Studio Legale</span>
-      <span class="brand-surname">Fussone</span>
+      <a class="brand" href="#top">
+        <span class="monogram" aria-hidden="true">GF</span>
+        <span class="brand-text">
+          <span class="brand-name">Studio Legale</span>
+          <span class="brand-surname">Fussone</span>
+        </span>
+      </a>
       <p>Avv. Giuseppe Fussone</p>
       <p>Indirizzo da confermare – 93017 San Cataldo (CL)</p>
     </div>
