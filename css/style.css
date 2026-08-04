@@ -4,11 +4,12 @@
   --ink-2: #1f3350;
   --gold: #a9824c;
   --gold-light: #c9a874;
-  --cream: #f7f4ef;
+  --blue-tint: #eef3fa;
+  --blue-mid: #3d5a82;
   --white: #ffffff;
   --text: #2b2f36;
   --muted: #6b7280;
-  --border: #e4ded3;
+  --border: #dbe4f0;
 
   --font-display: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -199,7 +200,7 @@ a { color: inherit; }
 
 /* ===== Hero ===== */
 .hero {
-  background: linear-gradient(180deg, var(--cream) 0%, var(--white) 100%);
+  background: linear-gradient(180deg, var(--blue-tint) 0%, var(--white) 100%);
   padding: 80px 0 68px;
 }
 .hero-inner {
@@ -225,15 +226,15 @@ a { color: inherit; }
   aspect-ratio: 4 / 5;
   border-radius: var(--radius);
   background:
-    repeating-linear-gradient(135deg, rgba(169,130,76,0.07) 0 12px, transparent 12px 24px),
-    var(--cream);
-  border: 1.5px dashed var(--gold-light);
+    repeating-linear-gradient(135deg, rgba(22,35,58,0.05) 0 12px, transparent 12px 24px),
+    var(--blue-tint);
+  border: 1.5px dashed var(--blue-mid);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 14px;
-  color: var(--gold);
+  color: var(--blue-mid);
   text-align: center;
   font-size: 0.9rem;
   font-weight: 600;
@@ -270,7 +271,7 @@ a { color: inherit; }
 
 /* ===== Sections ===== */
 .section { padding: 88px 0; }
-.section-alt { background: var(--cream); }
+.section-alt { background: var(--blue-tint); }
 
 .section-heading {
   max-width: 640px;
@@ -319,8 +320,8 @@ a { color: inherit; }
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--cream);
-  color: var(--gold);
+  background: var(--blue-tint);
+  color: var(--blue-mid);
   margin-bottom: 18px;
 }
 .card-media svg { width: 22px; height: 22px; }
@@ -458,7 +459,7 @@ a { color: inherit; }
 
 /* ===== Form ===== */
 .contatti-form {
-  background: var(--cream);
+  background: var(--blue-tint);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 36px;
