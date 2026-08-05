@@ -542,6 +542,14 @@ a { color: inherit; }
   gap: 14px;
 }
 
+.response-note {
+  margin: 18px 0 0;
+  font-size: 0.85rem;
+  color: var(--steel);
+  font-weight: 600;
+  font-family: var(--font-display);
+}
+
 /* ===== Form ===== */
 .contatti-form {
   background: var(--paper);
