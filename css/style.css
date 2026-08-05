@@ -92,19 +92,10 @@ a { color: inherit; }
 .cta-band .eyebrow,
 .hero .eyebrow { color: var(--silver); }
 
-/* ===== Monogram ===== */
-.monogram {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1.5px solid var(--silver);
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--silver-strong);
+/* ===== Logo ===== */
+.logo-icon {
+  height: 44px;
+  width: auto;
   flex-shrink: 0;
 }
 
@@ -481,6 +472,18 @@ a { color: inherit; }
 }
 .placeholder-portrait { aspect-ratio: 3 / 4; max-width: 340px; }
 .avvocato-content p { font-size: 1.05rem; color: var(--muted); max-width: 56ch; }
+.credential {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--steel);
+  border-bottom: 1.5px solid var(--steel);
+  padding-bottom: 6px;
+  margin-bottom: 18px;
+}
 
 /* ===== CTA band ===== */
 .cta-band {
