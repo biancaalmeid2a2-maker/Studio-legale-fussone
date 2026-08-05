@@ -471,6 +471,16 @@ a { color: inherit; }
   align-items: center;
 }
 .placeholder-portrait { aspect-ratio: 3 / 4; max-width: 340px; }
+
+.avvocato-photo {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
 .avvocato-content p { font-size: 1.05rem; color: var(--muted); max-width: 56ch; }
 .credential {
   display: inline-block;
