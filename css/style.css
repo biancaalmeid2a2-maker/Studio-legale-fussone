@@ -505,6 +505,39 @@ a { color: inherit; }
   margin-bottom: 18px;
 }
 
+.story-toggle { margin-top: 24px; }
+.story-toggle summary { list-style: none; display: inline-flex; cursor: pointer; }
+.story-toggle summary::-webkit-details-marker { display: none; }
+.story-body {
+  margin-top: 24px;
+  max-width: 56ch;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+.story-body p { color: var(--muted); }
+
+/* ===== Novità ===== */
+.novita-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+.novita-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 16px;
+  margin-bottom: 18px;
+}
+.novita p { color: var(--muted); font-size: 1.05rem; }
+
 /* ===== CTA band ===== */
 .cta-band {
   background: var(--ink);
