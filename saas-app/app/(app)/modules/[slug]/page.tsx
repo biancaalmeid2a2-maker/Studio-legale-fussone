@@ -73,9 +73,12 @@ export default async function ModuleDetailPage({ params }: { params: { slug: str
                 href={`/lessons/${lesson.slug}`}
                 className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-300"
               >
-                <span className="font-medium">{lesson.title}</span>
-                <span className="text-sm text-slate-500">
-                  {status === "completed" ? "✅ Concluída" : `+${lesson.xp_reward} XP`}
+                <span className="font-medium">
+                  {status === "completed" && <span aria-hidden="true">✅ </span>}
+                  {lesson.title}
+                </span>
+                <span className="text-sm font-semibold text-brand-700">
+                  +{lesson.xp_reward} XP
                 </span>
               </Link>
             );
