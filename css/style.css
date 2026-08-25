@@ -689,6 +689,19 @@ a { color: inherit; }
   .blog-grid { grid-template-columns: 1fr; }
 }
 
+/* ===== Recensioni Google ===== */
+.reviews-strip { background: var(--paper); padding: 56px 0; }
+.reviews-strip-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+.reviews-strip-text { max-width: 48ch; }
+.reviews-strip-text h2 { margin-bottom: 8px; font-size: clamp(1.4rem, 2.4vw, 1.8rem); }
+.reviews-strip-text p { color: var(--muted); margin: 0; }
+
 /* ===== CTA band ===== */
 .cta-band {
   background: var(--ink);
