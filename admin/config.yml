@@ -1,0 +1,31 @@
+backend:
+  name: git-gateway
+  branch: claude/studio-legale-fussone-landing-y5u3yt
+
+media_folder: "content/blog/images"
+public_folder: "/content/blog/images"
+
+collections:
+  - name: "blog"
+    label: "Articoli del blog"
+    folder: "content/blog"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - { label: "Data", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - label: "Categoria"
+        name: "category"
+        widget: "select"
+        options:
+          - "Diritto civile"
+          - "Diritto di famiglia"
+          - "Diritto penale"
+          - "Diritto del lavoro e previdenziale"
+          - "Recupero crediti"
+          - "Successioni ed eredità"
+          - "Infortunistica e responsabilità"
+          - "Diritto amministrativo, tributario e immigrazione"
+      - { label: "Riassunto breve (mostrato nella lista articoli)", name: "excerpt", widget: "text" }
+      - { label: "Fonte (link, solo se l'articolo si basa su una notizia esterna)", name: "source_url", widget: "string", required: false }
+      - { label: "Testo dell'articolo", name: "body", widget: "markdown" }

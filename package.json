@@ -1,0 +1,10 @@
+{
+  "name": "studio-legale-fussone",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-blog.js"
+  },
+  "dependencies": {
+    "marked": "^12.0.0"
+  }
+}
