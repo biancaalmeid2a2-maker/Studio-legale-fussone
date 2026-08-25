@@ -255,6 +255,47 @@ a { color: inherit; }
   margin-top: 28px;
 }
 
+.hero-portrait {
+  position: relative;
+  max-width: 380px;
+  margin-left: auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 24px 48px rgba(0,0,0,0.35);
+}
+.hero-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+.hero-portrait-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px 22px;
+  background: linear-gradient(0deg, rgba(15,27,48,0.92) 0%, rgba(15,27,48,0.7) 60%, transparent 100%);
+}
+.hero-portrait-caption strong {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--white);
+}
+.hero-portrait-caption span {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--silver);
+  margin-top: 4px;
+}
+
 /* ===== Placeholder media frames ===== */
 .placeholder-frame {
   aspect-ratio: 4 / 5;
@@ -732,6 +773,7 @@ textarea { resize: vertical; }
   .studio-media .placeholder-frame,
   .studio-photo { max-width: 320px; margin: 0 auto; }
   .avvocato-media { order: -1; max-width: 260px; margin: 0 auto; }
+  .hero-portrait { max-width: 300px; margin: 0 auto; }
   .cards-grid { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: repeat(2, 1fr); }
   .steps::before { display: none; }
