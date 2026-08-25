@@ -19,8 +19,9 @@ interface AnswerFeedback {
 /**
  * Fluxo pergunta-a-pergunta: o usuário escolhe uma opção, clica em "Responder"
  * e recebe feedback imediato (certo/errado + explicação) antes de avançar.
- * O placar de acertos/erros é local; a gravação definitiva (user_answers,
- * user_progress, user_stats) só acontece ao final, em /api/quiz/submit.
+ * Cada resposta já é gravada em user_answers e soma attempts em user_progress
+ * via /api/quiz/answer; ao final, /api/quiz/submit fecha a lição (status,
+ * score, completed_at) e atualiza user_stats (XP e streak).
  */
 export function Quiz({ lessonId, lessonTitle, questions }: QuizProps) {
   const router = useRouter();
@@ -56,7 +57,7 @@ export function Quiz({ lessonId, lessonTitle, questions }: QuizProps) {
       const res = await fetch("/api/quiz/answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questionId: currentQuestion.id, selectedOptionId }),
+        body: JSON.stringify({ lessonId, questionId: currentQuestion.id, selectedOptionId }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Erro ao validar resposta");
       const feedback: AnswerFeedback = await res.json();

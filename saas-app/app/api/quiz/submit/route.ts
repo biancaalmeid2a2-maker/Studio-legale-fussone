@@ -3,13 +3,16 @@ import { createClient } from "@/lib/supabase/server";
 import type { QuizAnswerInput, QuizResultItem, QuizSubmitResult } from "@/lib/types";
 
 const PASSING_SCORE_PERCENT = 80;
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
  * POST /api/quiz/submit
  * body: { lessonId: string, answers: QuizAnswerInput[] }
  *
- * Corrige as respostas no servidor (o cliente nunca recebe o gabarito),
- * grava o histórico, atualiza o progresso da lição e credita XP quando aprovado.
+ * Fecha o quiz: recalcula o score no servidor (o cliente já recebeu feedback
+ * por pergunta via /api/quiz/answer, que também gravou cada `user_answers` e
+ * incrementou `attempts` — aqui não repetimos essa gravação). Atualiza
+ * `user_progress` (status/score/completed_at) e `user_stats` (XP + streak).
  */
 export async function POST(request: Request) {
   const supabase = createClient();
@@ -66,33 +69,12 @@ export async function POST(request: Request) {
   const passed = score >= PASSING_SCORE_PERCENT;
   const xpAwarded = passed ? lesson.xp_reward : 0;
 
-  const answerRows = answers.map((answer) => ({
-    user_id: user.id,
-    question_id: answer.questionId,
-    lesson_id: lessonId,
-    selected_option_id: answer.selectedOptionId,
-    is_correct: correctById.get(answer.questionId)?.correct_option_id === answer.selectedOptionId,
-  }));
-
-  const { error: insertError } = await supabase.from("user_answers").insert(answerRows);
-  if (insertError) {
-    return NextResponse.json({ error: insertError.message }, { status: 500 });
-  }
-
-  const { data: existingProgress } = await supabase
-    .from("user_progress")
-    .select("attempts")
-    .eq("user_id", user.id)
-    .eq("lesson_id", lessonId)
-    .maybeSingle();
-
   const { error: progressError } = await supabase.from("user_progress").upsert(
     {
       user_id: user.id,
       lesson_id: lessonId,
       status: passed ? "completed" : "in_progress",
       score,
-      attempts: (existingProgress?.attempts ?? 0) + 1,
       completed_at: passed ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),
     },
@@ -103,21 +85,33 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: progressError.message }, { status: 500 });
   }
 
-  if (xpAwarded > 0) {
-    const { data: stats } = await supabase
-      .from("user_stats")
-      .select("xp_total")
-      .eq("user_id", user.id)
-      .single();
+  const { data: stats } = await supabase
+    .from("user_stats")
+    .select("xp_total, streak_current, streak_longest, last_activity_date")
+    .eq("user_id", user.id)
+    .single();
 
-    await supabase
-      .from("user_stats")
-      .update({
-        xp_total: (stats?.xp_total ?? 0) + xpAwarded,
-        last_activity_date: new Date().toISOString().slice(0, 10),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("user_id", user.id);
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - ONE_DAY_MS).toISOString().slice(0, 10);
+
+  let nextStreak = stats?.streak_current ?? 0;
+  if (stats?.last_activity_date !== today) {
+    nextStreak = stats?.last_activity_date === yesterday ? nextStreak + 1 : 1;
+  }
+
+  const { error: statsError } = await supabase
+    .from("user_stats")
+    .update({
+      xp_total: (stats?.xp_total ?? 0) + xpAwarded,
+      streak_current: nextStreak,
+      streak_longest: Math.max(stats?.streak_longest ?? 0, nextStreak),
+      last_activity_date: today,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", user.id);
+
+  if (statsError) {
+    return NextResponse.json({ error: statsError.message }, { status: 500 });
   }
 
   const response: QuizSubmitResult = {

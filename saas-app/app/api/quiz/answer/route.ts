@@ -2,12 +2,15 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * POST /api/quiz/answer — valida UMA resposta em tempo real, para feedback
- * imediato na tela (Duolingo-style: responde → vê se acertou → segue em frente).
+ * POST /api/quiz/answer — body: { lessonId, questionId, selectedOptionId }
  *
- * Não grava nada em `user_answers`: o registro definitivo (e a atualização de
- * user_progress/user_stats) acontece uma única vez em /api/quiz/submit, ao
- * final do quiz — assim não há linhas duplicadas se o usuário voltar/refizer.
+ * Chamado a cada resposta dentro do quiz (não só ao final):
+ * 1. Compara `selected_option_id` com o gabarito no servidor (o cliente
+ *    nunca recebe `correct_option_id` antes de responder).
+ * 2. Grava uma linha em `user_answers` (histórico completo de respostas).
+ * 3. Incrementa `attempts` em `user_progress`, garantindo que a lição
+ *    exista como pelo menos "in_progress" (nunca rebaixa uma já 'completed').
+ * 4. Retorna `is_correct` + `explanation` para o feedback instantâneo na tela.
  */
 export async function POST(request: Request) {
   const supabase = createClient();
@@ -19,27 +22,64 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
-  const { questionId, selectedOptionId } = (await request.json()) as {
+  const { lessonId, questionId, selectedOptionId } = (await request.json()) as {
+    lessonId?: string;
     questionId?: string;
     selectedOptionId?: string;
   };
 
-  if (!questionId || !selectedOptionId) {
+  if (!lessonId || !questionId || !selectedOptionId) {
     return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
   }
 
-  const { data: question, error } = await supabase
+  const { data: question, error: questionError } = await supabase
     .from("questions")
     .select("correct_option_id, explanation")
     .eq("id", questionId)
     .single();
 
-  if (error || !question) {
+  if (questionError || !question) {
     return NextResponse.json({ error: "Pergunta não encontrada" }, { status: 404 });
   }
 
+  const isCorrect = question.correct_option_id === selectedOptionId;
+
+  const { error: answerError } = await supabase.from("user_answers").insert({
+    user_id: user.id,
+    question_id: questionId,
+    lesson_id: lessonId,
+    selected_option_id: selectedOptionId,
+    is_correct: isCorrect,
+  });
+
+  if (answerError) {
+    return NextResponse.json({ error: answerError.message }, { status: 500 });
+  }
+
+  const { data: existingProgress } = await supabase
+    .from("user_progress")
+    .select("status, attempts")
+    .eq("user_id", user.id)
+    .eq("lesson_id", lessonId)
+    .maybeSingle();
+
+  const { error: progressError } = await supabase.from("user_progress").upsert(
+    {
+      user_id: user.id,
+      lesson_id: lessonId,
+      status: existingProgress?.status === "completed" ? "completed" : "in_progress",
+      attempts: (existingProgress?.attempts ?? 0) + 1,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,lesson_id" }
+  );
+
+  if (progressError) {
+    return NextResponse.json({ error: progressError.message }, { status: 500 });
+  }
+
   return NextResponse.json({
-    correct: question.correct_option_id === selectedOptionId,
+    correct: isCorrect,
     correctOptionId: question.correct_option_id,
     explanation: question.explanation,
   });
