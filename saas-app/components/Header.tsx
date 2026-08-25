@@ -9,9 +9,14 @@ interface HeaderProps {
 export function Header({ xpTotal, hearts, streak }: HeaderProps) {
   return (
     <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-      <Link href="/dashboard" className="text-lg font-bold">
-        🇮🇹 Patente Facile
-      </Link>
+      <div className="flex items-center gap-6">
+        <Link href="/dashboard" className="text-lg font-bold">
+          🇮🇹 Patente Facile
+        </Link>
+        <Link href="/modules" className="text-sm font-semibold text-slate-600 hover:text-slate-900">
+          Módulos
+        </Link>
+      </div>
       <div className="flex items-center gap-4 text-sm font-semibold">
         <span title="Sequência de dias">🔥 {streak}</span>
         <span title="Vidas">❤️ {hearts}</span>
