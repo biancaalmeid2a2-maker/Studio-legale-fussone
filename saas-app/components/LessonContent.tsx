@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AskAI } from "@/components/AskAI";
 import type { Lesson } from "@/lib/types";
 
 interface LessonContentProps {
@@ -47,6 +48,8 @@ export function LessonContent({ lesson }: LessonContentProps) {
           )
         )}
       </div>
+
+      <AskAI type="lesson" lessonId={lesson.id} />
 
       <button
         onClick={startQuiz}

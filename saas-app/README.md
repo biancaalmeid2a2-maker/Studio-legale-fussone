@@ -9,7 +9,8 @@ teórico da carta de motorista na Itália. Next.js 14 (App Router) + Supabase.
 2. No SQL Editor do Supabase, rode o conteúdo de `supabase/schema.sql`
    (cria tabelas, RLS, trigger de novo usuário e um seed de exemplo).
 3. Copie `.env.local.example` para `.env.local` e preencha com a URL e a
-   `anon key` do seu projeto Supabase.
+   `anon key` do seu projeto Supabase, e (opcional) sua `ANTHROPIC_API_KEY`
+   para o botão "Explicar melhor com IA" funcionar.
 4. Instale as dependências e rode em desenvolvimento:
 
    ```bash
@@ -37,9 +38,25 @@ app/(app)/lessons/[slug]/quiz   Fluxo do quiz (perguntas → resultado)
 app/(app)/profile               XP, streak, vidas e progresso por lição do usuário
 app/(app)/leaderboard           Ranking dos 10 maiores XP (via view `public.leaderboard`)
 app/(app)/admin                 Lista módulos/lições (só para profiles.is_admin = true)
+app/api/ai/explain              Gera explicação com Claude para uma pergunta ou lição
 components/LessonContent.tsx    Renderiza o `content` (jsonb) da lição
 components/Quiz.tsx             Componente interativo do quiz (perguntas → resultado)
+components/AskAI.tsx            Botão "Explicar melhor com IA" (usado na lição e no quiz)
 ```
+
+## AI Helper ("Explicar melhor com IA")
+
+`POST /api/ai/explain` chama a API da Anthropic (`@anthropic-ai/sdk`, modelo
+`claude-opus-5`) inteiramente no servidor: busca a pergunta ou a lição real no
+Supabase (o cliente só envia um `questionId`/`lessonId`, nunca texto livre),
+monta o prompt e devolve a explicação gerada. A `ANTHROPIC_API_KEY` fica só em
+`.env.local`/nas env vars do servidor — nunca é exposta ao navegador.
+
+Optamos por uma Route Handler do Next.js em vez de uma Supabase Edge Function
+(a segunda também seria válida) para não introduzir um segundo mecanismo de
+deploy/segredos só para essa função, já que o resto da API do app já vive em
+`app/api/`. Sem a env var configurada, o botão mostra um erro amigável em vez
+de quebrar a página.
 
 ## Modelo de dados (resumo)
 

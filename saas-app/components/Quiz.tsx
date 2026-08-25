@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AskAI } from "@/components/AskAI";
 import type { PublicQuestion, QuizSubmitResult } from "@/lib/types";
 
 interface QuizProps {
@@ -236,6 +237,10 @@ export function Quiz({ lessonId, lessonSlug, lessonTitle, questions, nextLessonS
           </p>
           {currentFeedback.explanation && <p className="mt-1">{currentFeedback.explanation}</p>}
         </div>
+      )}
+
+      {currentFeedback && (
+        <AskAI key={currentQuestion.id} type="question" questionId={currentQuestion.id} />
       )}
 
       {error && <p className="text-sm text-red-600">{error}</p>}
