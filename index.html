@@ -56,6 +56,16 @@
 
 <a class="skip-link" href="#main-content">Vai al contenuto principale</a>
 
+<div class="cookie-banner" id="cookie-banner" hidden>
+  <div class="container cookie-banner-inner">
+    <p>Usiamo la mappa di Google Maps solo se acconsenti al suo caricamento, che può comportare cookie di terze parti. Il sito non utilizza cookie di profilazione. <a href="privacy.html">Maggiori informazioni</a>.</p>
+    <div class="cookie-banner-actions">
+      <button type="button" class="btn btn-outline-dark btn-pill btn-small" id="cookie-reject">Rifiuta</button>
+      <button type="button" class="btn btn-on-dark btn-pill btn-small" id="cookie-accept">Accetta</button>
+    </div>
+  </div>
+</div>
+
 <header class="site-header" id="top">
   <div class="container header-inner">
     <a class="brand" href="#top">
@@ -468,13 +478,12 @@
         </div>
       </div>
 
-      <div class="map-embed">
-        <iframe
-          src="https://www.google.com/maps?q=Via+San+Giovanni+Bosco+41+93017+San+Cataldo+CL&output=embed"
-          width="100%" height="360" style="border:0;" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="Mappa: Via San Giovanni Bosco, 41 – San Cataldo (CL)">
-        </iframe>
+      <div class="map-embed" id="map-embed">
+        <div class="map-consent" id="map-consent">
+          <p>Questa mappa è fornita da Google Maps e viene caricata solo con il tuo consenso, poiché può comportare cookie di terze parti.</p>
+          <button type="button" class="btn btn-outline btn-pill btn-small" id="map-consent-accept">Carica la mappa</button>
+          <a class="map-consent-link" href="https://www.google.com/maps?q=Via+San+Giovanni+Bosco+41+93017+San+Cataldo+CL" target="_blank" rel="noopener">Oppure apri su Google Maps &rarr;</a>
+        </div>
       </div>
     </div>
   </section>

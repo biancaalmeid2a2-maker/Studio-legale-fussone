@@ -16,6 +16,65 @@ mainNav.querySelectorAll('a').forEach((link) => {
   });
 });
 
+// Google Maps embed: load only after consent, since it can set third-party
+// cookies. Consent is remembered in localStorage (not a cookie).
+const mapEmbed = document.getElementById('map-embed');
+const mapConsentAccept = document.getElementById('map-consent-accept');
+const cookieBanner = document.getElementById('cookie-banner');
+const cookieAccept = document.getElementById('cookie-accept');
+const cookieReject = document.getElementById('cookie-reject');
+const MAP_SRC = 'https://www.google.com/maps?q=Via+San+Giovanni+Bosco+41+93017+San+Cataldo+CL&output=embed';
+
+function loadMap() {
+  if (!mapEmbed || mapEmbed.querySelector('iframe')) return;
+  const iframe = document.createElement('iframe');
+  iframe.src = MAP_SRC;
+  iframe.width = '100%';
+  iframe.height = '360';
+  iframe.style.border = '0';
+  iframe.loading = 'lazy';
+  iframe.referrerPolicy = 'no-referrer-when-downgrade';
+  iframe.title = 'Mappa: Via San Giovanni Bosco, 41 – San Cataldo (CL)';
+  mapEmbed.innerHTML = '';
+  mapEmbed.appendChild(iframe);
+}
+
+if (mapEmbed) {
+  let storedConsent = null;
+  try { storedConsent = localStorage.getItem('cookie-consent'); } catch (err) {}
+
+  if (storedConsent === 'accepted') {
+    loadMap();
+  } else if (storedConsent !== 'rejected' && cookieBanner) {
+    cookieBanner.hidden = false;
+    document.body.classList.add('cookie-banner-visible');
+  }
+
+  if (mapConsentAccept) {
+    mapConsentAccept.addEventListener('click', () => {
+      loadMap();
+      try { localStorage.setItem('cookie-consent', 'accepted'); } catch (err) {}
+      if (cookieBanner) cookieBanner.hidden = true;
+      document.body.classList.remove('cookie-banner-visible');
+    });
+  }
+  if (cookieAccept) {
+    cookieAccept.addEventListener('click', () => {
+      loadMap();
+      try { localStorage.setItem('cookie-consent', 'accepted'); } catch (err) {}
+      cookieBanner.hidden = true;
+      document.body.classList.remove('cookie-banner-visible');
+    });
+  }
+  if (cookieReject) {
+    cookieReject.addEventListener('click', () => {
+      try { localStorage.setItem('cookie-consent', 'rejected'); } catch (err) {}
+      cookieBanner.hidden = true;
+      document.body.classList.remove('cookie-banner-visible');
+    });
+  }
+}
+
 // Contact form: send a background copy to the studio's inbox, then hand the
 // client off to their chosen contact channel (WhatsApp / e-mail / phone)
 const contactForm = document.getElementById('contact-form');
