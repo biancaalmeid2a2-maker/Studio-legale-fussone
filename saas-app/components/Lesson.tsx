@@ -14,6 +14,7 @@ type Step = "content" | "quiz" | "result";
 export function Lesson({ lesson, questions }: LessonProps) {
   const router = useRouter();
   const [step, setStep] = useState<Step>("content");
+  const [startingQuiz, setStartingQuiz] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -24,6 +25,22 @@ export function Lesson({ lesson, questions }: LessonProps) {
 
   function selectOption(questionId: string, optionId: string) {
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
+  }
+
+  async function startQuiz() {
+    setStartingQuiz(true);
+    try {
+      await fetch("/api/progress/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lessonId: lesson.id }),
+      });
+    } catch {
+      // progresso é "best effort" aqui — não deve impedir o usuário de fazer o quiz
+    } finally {
+      setStartingQuiz(false);
+      setStep("quiz");
+    }
   }
 
   function goToNextQuestion() {
@@ -81,10 +98,11 @@ export function Lesson({ lesson, questions }: LessonProps) {
           )}
         </div>
         <button
-          onClick={() => setStep("quiz")}
-          className="self-start rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700"
+          onClick={startQuiz}
+          disabled={startingQuiz}
+          className="self-start rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
         >
-          Iniciar quiz
+          {startingQuiz ? "Iniciando..." : "Iniciar Quiz"}
         </button>
       </div>
     );
