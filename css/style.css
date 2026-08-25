@@ -673,6 +673,14 @@ textarea { resize: vertical; }
   margin-top: 16px;
   text-align: center;
 }
+.form-status {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  min-height: 1.4em;
+  margin-top: 12px;
+}
 
 /* ===== Footer ===== */
 .site-footer {

@@ -386,9 +386,10 @@
 
         <!-- FORM DI CONTATTO -->
         <div class="contatti-form" id="form-contatto">
-          <form id="contact-form" action="https://formsubmit.co/avvfussone@virgilio.it" method="POST">
+          <form id="contact-form" action="https://formsubmit.co/ajax/avvfussone@virgilio.it" method="POST">
             <input type="hidden" name="_subject" value="Nuova richiesta di consulenza - sito web">
             <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 
             <div class="form-row">
@@ -447,6 +448,7 @@
             <button type="submit" class="btn btn-primary btn-pill btn-full">Invia richiesta</button>
 
             <p class="form-disclaimer">L'invio della richiesta non costituisce conferimento di incarico professionale.</p>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
           </form>
         </div>
       </div>
