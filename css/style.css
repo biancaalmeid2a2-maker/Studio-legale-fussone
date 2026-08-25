@@ -254,12 +254,8 @@ a { color: inherit; }
   font-weight: 600;
   color: rgba(255,255,255,0.55);
   margin-top: -8px;
+  max-width: 52ch;
 }
-.hero-trust a {
-  color: var(--silver-strong);
-  text-decoration: underline;
-}
-.hero-trust a:hover { color: var(--white); }
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -412,26 +408,6 @@ a { color: inherit; }
   object-fit: cover;
   border-radius: var(--radius);
   margin-left: auto;
-}
-
-/* ===== Collaborazioni ===== */
-.collaborazioni { background: var(--white); text-align: center; padding: 64px 0; }
-.collaborazioni-inner { max-width: 640px; margin: 0 auto; }
-.collaborazioni h2 { font-size: clamp(1.4rem, 2.4vw, 1.8rem); }
-.collaborazioni-featured {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--steel);
-  letter-spacing: 0.02em;
-  margin-bottom: 24px;
-}
-.collaborazioni-toggle summary { list-style: none; display: inline-flex; cursor: pointer; }
-.collaborazioni-toggle summary::-webkit-details-marker { display: none; }
-.collaborazioni-rest {
-  margin: 20px auto 0;
-  max-width: 56ch;
-  color: var(--muted);
 }
 
 /* ===== Cards ===== */
