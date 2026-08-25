@@ -20,7 +20,7 @@ mainNav.querySelectorAll('a').forEach((link) => {
 // client off to their chosen contact channel (WhatsApp / e-mail / phone)
 const contactForm = document.getElementById('contact-form');
 const formStatus = document.getElementById('form-status');
-const WHATSAPP_NUMBER = '393388853273';
+const WHATSAPP_NUMBER = '393713052304';
 const STUDIO_EMAIL = 'avvfussone@virgilio.it';
 
 if (contactForm) {
