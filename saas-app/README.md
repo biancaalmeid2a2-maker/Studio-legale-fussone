@@ -34,6 +34,9 @@ app/(app)/dashboard        Painel com módulos e progresso
 app/(app)/modules/[slug]   Lições de um módulo
 app/(app)/lessons/[slug]        Conteúdo da lição + botão "Iniciar Quiz"
 app/(app)/lessons/[slug]/quiz   Fluxo do quiz (perguntas → resultado)
+app/(app)/profile               XP, streak, vidas e progresso por lição do usuário
+app/(app)/leaderboard           Ranking dos 10 maiores XP (via view `public.leaderboard`)
+app/(app)/admin                 Lista módulos/lições (só para profiles.is_admin = true)
 components/LessonContent.tsx    Renderiza o `content` (jsonb) da lição
 components/Quiz.tsx             Componente interativo do quiz (perguntas → resultado)
 ```
@@ -45,6 +48,8 @@ components/Quiz.tsx             Componente interativo do quiz (perguntas → res
 - **user_progress** — status por lição (`not_started` / `in_progress` / `completed`), nota e tentativas.
 - **user_answers** — histórico de cada resposta dada (auditoria/analytics).
 - **user_stats** — XP total, vidas (hearts) e streak, no estilo Duolingo.
+- **leaderboard** (view) — `user_id`, `full_name`, `xp_total`, para o ranking global sem
+  expor e-mail/streak/hearts das outras pessoas.
 
 O gabarito (`correct_option_id`) nunca é enviado ao cliente antes da correção:
 a rota `POST /api/quiz/submit` valida as respostas no servidor e só então
@@ -52,8 +57,13 @@ retorna o resultado com as explicações.
 
 ## Próximos passos sugeridos
 
-- Painel admin para cadastrar módulos/lições/perguntas (hoje é via SQL/seed).
+- Formulários de criação/edição em `/admin` (hoje é só leitura; RLS de admin já existe).
 - Sistema de "vidas" (hearts) descontando ao errar e recarregando com o tempo.
-- Cálculo de streak diário (via cron/Edge Function do Supabase).
 - Suporte a múltiplos idiomas de interface (pt/en/es) além do conteúdo em italiano.
 - Testes end-to-end do fluxo login → lição → quiz → progresso.
+
+Para tornar um usuário admin (necessário para acessar `/admin`):
+
+```sql
+update public.profiles set is_admin = true where email = 'seuemail@exemplo.com';
+```

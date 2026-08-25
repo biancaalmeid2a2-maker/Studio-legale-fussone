@@ -31,7 +31,7 @@ export default async function ProfilePage() {
   if (!user) redirect("/login");
 
   const [{ data: profile }, { data: stats }, { data: progress }] = await Promise.all([
-    supabase.from("profiles").select("full_name, email").eq("id", user.id).single(),
+    supabase.from("profiles").select("full_name, email, is_admin").eq("id", user.id).single(),
     supabase.from("user_stats").select("*").eq("user_id", user.id).single(),
     supabase
       .from("user_progress")
@@ -87,14 +87,24 @@ export default async function ProfilePage() {
           ))}
         </div>
 
-        <form action="/api/auth/signout" method="post" className="mt-8">
-          <button
-            type="submit"
-            className="rounded-full border border-slate-300 px-6 py-2.5 font-semibold text-slate-700 hover:bg-slate-100"
-          >
-            Sair
-          </button>
-        </form>
+        <div className="mt-8 flex items-center gap-3">
+          {profile?.is_admin && (
+            <Link
+              href="/admin"
+              className="rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700"
+            >
+              Painel admin
+            </Link>
+          )}
+          <form action="/api/auth/signout" method="post">
+            <button
+              type="submit"
+              className="rounded-full border border-slate-300 px-6 py-2.5 font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              Sair
+            </button>
+          </form>
+        </div>
       </main>
     </>
   );

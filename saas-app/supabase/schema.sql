@@ -202,6 +202,25 @@ create policy "user_stats: update own" on public.user_stats
   for update using (auth.uid() = user_id);
 
 -- ============================================================
+-- Leaderboard: view somente-leitura, sem RLS própria
+-- ============================================================
+-- profiles/user_stats só permitem "ver os próprios dados" (RLS acima). Para o
+-- ranking global expor apenas o necessário (nome + XP, nunca e-mail/streak/
+-- hearts), criamos uma view separada. Views do Postgres rodam com o
+-- privilégio de quem as criou (dono), então esta consulta enxerga todas as
+-- linhas mesmo com RLS ativo nas tabelas base — só liberamos SELECT nela.
+create view public.leaderboard as
+select
+  s.user_id,
+  p.full_name,
+  s.xp_total
+from public.user_stats s
+join public.profiles p on p.id = s.user_id
+order by s.xp_total desc;
+
+grant select on public.leaderboard to authenticated;
+
+-- ============================================================
 -- Seed mínimo de exemplo
 -- ============================================================
 insert into public.modules (slug, title, description, icon, order_index) values
