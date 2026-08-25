@@ -248,6 +248,18 @@ a { color: inherit; }
   color: var(--silver);
   max-width: 46ch;
 }
+.hero-trust {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  margin-top: -8px;
+}
+.hero-trust a {
+  color: var(--silver-strong);
+  text-decoration: underline;
+}
+.hero-trust a:hover { color: var(--white); }
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
