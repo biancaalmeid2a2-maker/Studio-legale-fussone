@@ -10,19 +10,62 @@ interface QuizProps {
   questions: PublicQuestion[];
 }
 
-/** Fluxo pergunta-a-pergunta do quiz de uma lição, com correção no servidor ao final. */
+interface AnswerFeedback {
+  correct: boolean;
+  correctOptionId: string;
+  explanation: string | null;
+}
+
+/**
+ * Fluxo pergunta-a-pergunta: o usuário escolhe uma opção, clica em "Responder"
+ * e recebe feedback imediato (certo/errado + explicação) antes de avançar.
+ * O placar de acertos/erros é local; a gravação definitiva (user_answers,
+ * user_progress, user_stats) só acontece ao final, em /api/quiz/submit.
+ */
 export function Quiz({ lessonId, lessonTitle, questions }: QuizProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [feedbackByQuestion, setFeedbackByQuestion] = useState<Record<string, AnswerFeedback>>(
+    {}
+  );
+  const [checking, setChecking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<QuizSubmitResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const currentQuestion = questions[currentIndex];
+  const currentFeedback = currentQuestion ? feedbackByQuestion[currentQuestion.id] : undefined;
+
+  const feedbackValues = Object.values(feedbackByQuestion);
+  const correctSoFar = feedbackValues.filter((f) => f.correct).length;
+  const incorrectSoFar = feedbackValues.filter((f) => !f.correct).length;
 
   function selectOption(questionId: string, optionId: string) {
+    if (feedbackByQuestion[questionId]) return; // já respondida — não deixa trocar
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
+  }
+
+  async function checkAnswer() {
+    const selectedOptionId = answers[currentQuestion.id];
+    if (!selectedOptionId) return;
+
+    setChecking(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/quiz/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionId: currentQuestion.id, selectedOptionId }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error ?? "Erro ao validar resposta");
+      const feedback: AnswerFeedback = await res.json();
+      setFeedbackByQuestion((prev) => ({ ...prev, [currentQuestion.id]: feedback }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro inesperado");
+    } finally {
+      setChecking(false);
+    }
   }
 
   function goToNextQuestion() {
@@ -101,16 +144,26 @@ export function Quiz({ lessonId, lessonTitle, questions }: QuizProps) {
   }
 
   if (!currentQuestion) {
-    return <p className="text-sm text-slate-500">Esta lição ainda não tem perguntas cadastradas.</p>;
+    return (
+      <p className="text-sm text-slate-500">Esta lição ainda não tem perguntas cadastradas.</p>
+    );
   }
 
   const selected = answers[currentQuestion.id];
+  const isLastQuestion = currentIndex === questions.length - 1;
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-sm font-semibold text-slate-500">
-        {lessonTitle} · Pergunta {currentIndex + 1} de {questions.length}
+      <div className="flex items-center justify-between text-sm font-semibold text-slate-500">
+        <span>
+          {lessonTitle} · Pergunta {currentIndex + 1} de {questions.length}
+        </span>
+        <span className="flex gap-3">
+          <span className="text-brand-700">✅ {correctSoFar}</span>
+          <span className="text-red-600">❌ {incorrectSoFar}</span>
+        </span>
       </div>
+
       <h2 className="text-xl font-bold">{currentQuestion.prompt}</h2>
 
       {currentQuestion.image_url && (
@@ -119,30 +172,66 @@ export function Quiz({ lessonId, lessonTitle, questions }: QuizProps) {
       )}
 
       <div className="flex flex-col gap-3">
-        {currentQuestion.options.map((option) => (
-          <button
-            key={option.id}
-            onClick={() => selectOption(currentQuestion.id, option.id)}
-            className={`rounded-xl border px-4 py-3 text-left font-medium transition-colors ${
-              selected === option.id
-                ? "border-brand-600 bg-brand-50"
-                : "border-slate-200 hover:bg-slate-50"
-            }`}
-          >
-            {option.text}
-          </button>
-        ))}
+        {currentQuestion.options.map((option) => {
+          const isSelected = selected === option.id;
+          const isCorrectOption = currentFeedback?.correctOptionId === option.id;
+
+          let optionClass = "border-slate-200 hover:bg-slate-50";
+          if (currentFeedback && isCorrectOption) {
+            optionClass = "border-brand-600 bg-brand-50";
+          } else if (currentFeedback && isSelected && !isCorrectOption) {
+            optionClass = "border-red-400 bg-red-50";
+          } else if (!currentFeedback && isSelected) {
+            optionClass = "border-brand-600 bg-brand-50";
+          }
+
+          return (
+            <button
+              key={option.id}
+              onClick={() => selectOption(currentQuestion.id, option.id)}
+              disabled={!!currentFeedback}
+              className={`rounded-xl border px-4 py-3 text-left font-medium transition-colors disabled:cursor-default ${optionClass}`}
+            >
+              {option.text}
+            </button>
+          );
+        })}
       </div>
+
+      {currentFeedback && (
+        <div
+          className={`rounded-xl border p-4 text-sm ${
+            currentFeedback.correct
+              ? "border-brand-300 bg-brand-50 text-brand-800"
+              : "border-red-200 bg-red-50 text-red-800"
+          }`}
+        >
+          <p className="font-semibold">
+            {currentFeedback.correct ? "Certinho! ✅" : "Não foi dessa vez ❌"}
+          </p>
+          {currentFeedback.explanation && <p className="mt-1">{currentFeedback.explanation}</p>}
+        </div>
+      )}
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <button
-        onClick={goToNextQuestion}
-        disabled={!selected || submitting}
-        className="self-start rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
-      >
-        {submitting ? "Enviando..." : currentIndex < questions.length - 1 ? "Próxima" : "Finalizar"}
-      </button>
+      {!currentFeedback ? (
+        <button
+          onClick={checkAnswer}
+          disabled={!selected || checking}
+          className="self-start rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+        >
+          {checking ? "Verificando..." : "Responder"}
+        </button>
+      ) : (
+        <button
+          onClick={goToNextQuestion}
+          disabled={submitting}
+          className="self-start rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+        >
+          {submitting ? "Enviando..." : isLastQuestion ? "Finalizar" : "Próxima"}
+        </button>
+      )}
     </div>
   );
 }
