@@ -16,6 +16,9 @@ export function Header({ xpTotal, hearts, streak }: HeaderProps) {
         <Link href="/modules" className="text-sm font-semibold text-slate-600 hover:text-slate-900">
           Módulos
         </Link>
+        <Link href="/profile" className="text-sm font-semibold text-slate-600 hover:text-slate-900">
+          Perfil
+        </Link>
       </div>
       <div className="flex items-center gap-4 text-sm font-semibold">
         <span title="Sequência de dias">🔥 {streak}</span>

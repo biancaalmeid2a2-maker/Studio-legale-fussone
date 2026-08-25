@@ -74,3 +74,17 @@ export interface UserProgress {
   score: number | null;
   attempts: number;
 }
+
+/** Linha de user_progress com a lição (e o módulo dela) embutidos, para a página de perfil. */
+export interface ProgressListItem {
+  status: ProgressStatus;
+  score: number | null;
+  attempts: number;
+  completed_at: string | null;
+  lessons: {
+    title: string;
+    slug: string;
+    xp_reward: number;
+    modules: { title: string } | null;
+  } | null;
+}

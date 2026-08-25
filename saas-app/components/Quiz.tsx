@@ -6,8 +6,11 @@ import type { PublicQuestion, QuizSubmitResult } from "@/lib/types";
 
 interface QuizProps {
   lessonId: string;
+  lessonSlug: string;
   lessonTitle: string;
   questions: PublicQuestion[];
+  /** slug da próxima lição do mesmo módulo, se houver — habilita o botão "Próxima lição". */
+  nextLessonSlug: string | null;
 }
 
 interface AnswerFeedback {
@@ -23,7 +26,7 @@ interface AnswerFeedback {
  * via /api/quiz/answer; ao final, /api/quiz/submit fecha a lição (status,
  * score, completed_at) e atualiza user_stats (XP e streak).
  */
-export function Quiz({ lessonId, lessonTitle, questions }: QuizProps) {
+export function Quiz({ lessonId, lessonSlug, lessonTitle, questions, nextLessonSlug }: QuizProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -107,11 +110,16 @@ export function Quiz({ lessonId, lessonTitle, questions }: QuizProps) {
   }
 
   if (result) {
+    const correctCount = result.results.filter((r) => r.correct).length;
+
     return (
       <div className="flex flex-col gap-6">
         <h1 className="text-2xl font-bold">{result.passed ? "🎉 Você passou!" : "😕 Quase lá"}</h1>
         <p className="text-lg">
-          Pontuação: <strong>{result.score}%</strong> ({result.totalQuestions} perguntas)
+          <strong>
+            {correctCount}/{result.totalQuestions}
+          </strong>{" "}
+          acertos · <strong>{result.score}%</strong> de pontuação
           {result.passed && <> · +{result.xpAwarded} XP</>}
         </p>
 
@@ -134,12 +142,28 @@ export function Quiz({ lessonId, lessonTitle, questions }: QuizProps) {
           })}
         </div>
 
-        <button
-          onClick={() => router.push("/dashboard")}
-          className="self-start rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700"
-        >
-          Voltar ao painel
-        </button>
+        <div className="flex flex-wrap gap-3">
+          {nextLessonSlug && (
+            <button
+              onClick={() => router.push(`/lessons/${nextLessonSlug}`)}
+              className="rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700"
+            >
+              Próxima lição →
+            </button>
+          )}
+          <button
+            onClick={() => router.push(`/lessons/${lessonSlug}`)}
+            className="rounded-full border border-slate-300 px-6 py-2.5 font-semibold hover:bg-slate-100"
+          >
+            Revisar lição
+          </button>
+          <button
+            onClick={() => router.push("/modules")}
+            className="rounded-full border border-slate-300 px-6 py-2.5 font-semibold hover:bg-slate-100"
+          >
+            Voltar para módulos
+          </button>
+        </div>
       </div>
     );
   }
