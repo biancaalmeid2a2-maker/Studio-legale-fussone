@@ -402,6 +402,26 @@ a { color: inherit; }
   margin-left: auto;
 }
 
+/* ===== Collaborazioni ===== */
+.collaborazioni { background: var(--white); text-align: center; padding: 64px 0; }
+.collaborazioni-inner { max-width: 640px; margin: 0 auto; }
+.collaborazioni h2 { font-size: clamp(1.4rem, 2.4vw, 1.8rem); }
+.collaborazioni-featured {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--steel);
+  letter-spacing: 0.02em;
+  margin-bottom: 24px;
+}
+.collaborazioni-toggle summary { list-style: none; display: inline-flex; cursor: pointer; }
+.collaborazioni-toggle summary::-webkit-details-marker { display: none; }
+.collaborazioni-rest {
+  margin: 20px auto 0;
+  max-width: 56ch;
+  color: var(--muted);
+}
+
 /* ===== Cards ===== */
 .cards-grid {
   display: grid;
