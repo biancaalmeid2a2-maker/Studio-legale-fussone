@@ -28,11 +28,14 @@ lib/types.ts               Tipos compartilhados (Lesson, Question, etc.)
 app/api/auth/              Callback de confirmação + signout
 app/api/lessons/           Listagem de módulos/lições e detalhe de uma lição
 app/api/quiz/submit/       Correção do quiz no servidor + atualização de XP/progresso
-app/api/progress/          Stats e progresso do usuário logado
+app/api/progress/          Stats do usuário + marcação de lição como "in_progress"
 app/(auth)/login|signup    Telas de autenticação
 app/(app)/dashboard        Painel com módulos e progresso
-app/(app)/lessons/[slug]   Página de uma lição (conteúdo + quiz)
-components/Lesson.tsx      Componente interativo do quiz (conteúdo → perguntas → resultado)
+app/(app)/modules/[slug]   Lições de um módulo
+app/(app)/lessons/[slug]        Conteúdo da lição + botão "Iniciar Quiz"
+app/(app)/lessons/[slug]/quiz   Fluxo do quiz (perguntas → resultado)
+components/LessonContent.tsx    Renderiza o `content` (jsonb) da lição
+components/Quiz.tsx             Componente interativo do quiz (perguntas → resultado)
 ```
 
 ## Modelo de dados (resumo)
