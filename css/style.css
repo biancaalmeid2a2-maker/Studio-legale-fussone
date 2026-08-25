@@ -602,6 +602,14 @@ a { color: inherit; }
   gap: 56px;
   align-items: start;
 }
+
+.map-embed {
+  margin-top: 48px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.map-embed iframe { display: block; }
 .info-list {
   list-style: none;
   margin: 0 0 32px;
@@ -632,6 +640,7 @@ a { color: inherit; }
   font-weight: 600;
 }
 .info-list a:hover { color: var(--steel); }
+.social-links { display: flex; gap: 18px; }
 
 .contatti-actions {
   display: flex;
