@@ -19,6 +19,7 @@ create table public.profiles (
   email text,
   full_name text,
   native_language text not null default 'pt',
+  is_admin boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -157,13 +158,30 @@ create policy "profiles: select own" on public.profiles
 create policy "profiles: update own" on public.profiles
   for update using (auth.uid() = id);
 
--- conteúdo (módulos/lições/perguntas): leitura livre para autenticados, escrita só via service role
+-- conteúdo (módulos/lições/perguntas): leitura livre (publicado) para autenticados
 create policy "modules: read published" on public.modules
   for select to authenticated using (is_published = true);
 create policy "lessons: read published" on public.lessons
   for select to authenticated using (is_published = true);
 create policy "questions: read all" on public.questions
   for select to authenticated using (true);
+
+-- admins (profiles.is_admin = true) podem criar/editar/apagar conteúdo,
+-- incluindo módulos/lições ainda não publicados (a policy acima cobre a leitura pública)
+create policy "modules: admin manage" on public.modules
+  for all to authenticated
+  using (auth.uid() in (select id from public.profiles where is_admin = true))
+  with check (auth.uid() in (select id from public.profiles where is_admin = true));
+
+create policy "lessons: admin manage" on public.lessons
+  for all to authenticated
+  using (auth.uid() in (select id from public.profiles where is_admin = true))
+  with check (auth.uid() in (select id from public.profiles where is_admin = true));
+
+create policy "questions: admin manage" on public.questions
+  for all to authenticated
+  using (auth.uid() in (select id from public.profiles where is_admin = true))
+  with check (auth.uid() in (select id from public.profiles where is_admin = true));
 
 -- progresso/respostas/stats: cada usuário só acessa os próprios dados
 create policy "user_progress: select own" on public.user_progress
