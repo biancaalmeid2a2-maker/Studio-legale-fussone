@@ -1091,12 +1091,29 @@ body.cookie-banner-visible .whatsapp-fab { bottom: 116px; }
   color: var(--steel);
   margin: 0 0 12px;
 }
-.team-card-body p:last-child { color: var(--muted); font-size: 0.92rem; margin: 0; }
+.team-card-body p:last-child,
+.team-bio,
+.team-bio-more p { color: var(--muted); font-size: 0.92rem; margin: 0; }
+.team-bio-more { margin-top: 12px; }
+.team-bio-more summary {
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+.team-bio-more summary::-webkit-details-marker { display: none; }
+.team-bio-more summary::after { content: " \2193"; }
+.team-bio-more[open] summary { margin-bottom: 10px; }
+.team-bio-more[open] summary::after { content: " \2191"; }
+.team-card-body .team-bio-more p + p { margin-top: 10px; }
 .main-nav a[aria-current="page"] { color: var(--white); }
 
 /* Horizontal scroller for collaborators */
 .team-track {
   display: flex;
+  align-items: flex-start;
   gap: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
