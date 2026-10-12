@@ -42,6 +42,7 @@ function header() {
         <li><a href="../index.html#aree">Aree di attività</a></li>
         <li><a href="../index.html#metodo">Metodo</a></li>
         <li><a href="../index.html#avvocato">Avvocato</a></li>
+        <li><a href="../team.html">Il Team</a></li>
         <li><a href="index.html">Blog</a></li>
         <li><a href="../index.html#contatti">Contatti</a></li>
       </ul>
@@ -309,6 +310,7 @@ function updateHomepageTeaser(posts) {
 function updateSitemap(posts) {
   const urls = [
     `${SITE_URL}/`,
+    `${SITE_URL}/team.html`,
     `${SITE_URL}/blog/`,
     ...posts.map((p) => `${SITE_URL}/blog/${p.slug}.html`),
     `${SITE_URL}/privacy.html`,
