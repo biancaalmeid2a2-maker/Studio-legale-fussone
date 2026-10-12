@@ -140,3 +140,25 @@ if (contactForm) {
     submitBtn.disabled = false;
   });
 }
+
+// Team page: arrow buttons for the horizontal collaborators scroller
+const teamTrack = document.getElementById('team-track');
+const teamPrev = document.getElementById('team-prev');
+const teamNext = document.getElementById('team-next');
+
+if (teamTrack && teamPrev && teamNext) {
+  const step = () => {
+    const card = teamTrack.querySelector('.team-card');
+    return card ? card.getBoundingClientRect().width + 24 : teamTrack.clientWidth;
+  };
+  const updateButtons = () => {
+    const max = teamTrack.scrollWidth - teamTrack.clientWidth - 2;
+    teamPrev.disabled = teamTrack.scrollLeft <= 2;
+    teamNext.disabled = teamTrack.scrollLeft >= max;
+  };
+  teamPrev.addEventListener('click', () => teamTrack.scrollBy({ left: -step() }));
+  teamNext.addEventListener('click', () => teamTrack.scrollBy({ left: step() }));
+  teamTrack.addEventListener('scroll', updateButtons, { passive: true });
+  window.addEventListener('resize', updateButtons);
+  updateButtons();
+}

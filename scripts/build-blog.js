@@ -310,6 +310,7 @@ function updateHomepageTeaser(posts) {
 function updateSitemap(posts) {
   const urls = [
     `${SITE_URL}/`,
+    `${SITE_URL}/giuseppe-fussone.html`,
     `${SITE_URL}/team.html`,
     `${SITE_URL}/blog/`,
     ...posts.map((p) => `${SITE_URL}/blog/${p.slug}.html`),
