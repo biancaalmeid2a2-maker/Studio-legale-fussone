@@ -715,6 +715,7 @@ a { color: inherit; }
 .review-author { font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; color: var(--ink); margin: 0; }
 .review-author span { font-weight: 400; color: var(--muted); }
 .reviews-more { text-align: center; margin-top: 8px; }
+.reviews-track + .team-nav { margin-bottom: 24px; }
 
 /* ===== CTA band ===== */
 .cta-band {
@@ -1123,14 +1124,16 @@ body.cookie-banner-visible .whatsapp-fab { bottom: 116px; }
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
 }
-.team-track.is-carousel {
+.team-track.is-carousel,
+.reviews-track.is-carousel {
   scroll-snap-type: none;
   scroll-behavior: auto;
   scrollbar-width: none;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
   mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
 }
-.team-track.is-carousel::-webkit-scrollbar { display: none; }
+.team-track.is-carousel::-webkit-scrollbar,
+.reviews-track.is-carousel::-webkit-scrollbar { display: none; }
 .team-track:focus-visible { outline: 2px solid var(--steel); outline-offset: 4px; border-radius: var(--radius); }
 .team-track .team-card {
   flex: 0 0 calc((100% - 48px) / 3);
