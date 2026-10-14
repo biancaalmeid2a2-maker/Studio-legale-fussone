@@ -1091,7 +1091,8 @@ body.cookie-banner-visible .whatsapp-fab { bottom: 116px; }
   color: var(--steel);
   margin: 0 0 12px;
 }
-.team-card-body p:last-child,
+.team-role:last-child { margin-bottom: 0; }
+.team-card-body p:not(.team-role):last-child,
 .team-bio,
 .team-bio-more p { color: var(--muted); font-size: 0.92rem; margin: 0; }
 .team-bio-more { margin-top: 12px; }
