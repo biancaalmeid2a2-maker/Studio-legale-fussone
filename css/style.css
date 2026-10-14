@@ -1123,6 +1123,14 @@ body.cookie-banner-visible .whatsapp-fab { bottom: 116px; }
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
 }
+.team-track.is-carousel {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+}
+.team-track.is-carousel::-webkit-scrollbar { display: none; }
 .team-track:focus-visible { outline: 2px solid var(--steel); outline-offset: 4px; border-radius: var(--radius); }
 .team-track .team-card {
   flex: 0 0 calc((100% - 48px) / 3);

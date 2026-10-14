@@ -141,24 +141,89 @@ if (contactForm) {
   });
 }
 
-// Team page: arrow buttons for the horizontal collaborators scroller
+// Team page: collaborators carousel. Drifts slowly on its own like a shop
+// window and loops forever (the cards are cloned once so the end joins the
+// start). Pauses while the visitor hovers, touches or focuses it; the arrows
+// still move one card at a time.
 const teamTrack = document.getElementById('team-track');
 const teamPrev = document.getElementById('team-prev');
 const teamNext = document.getElementById('team-next');
 
 if (teamTrack && teamPrev && teamNext) {
-  const step = () => {
-    const card = teamTrack.querySelector('.team-card');
-    return card ? card.getBoundingClientRect().width + 24 : teamTrack.clientWidth;
+  const SPEED = 30; // px per second
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const originals = Array.from(teamTrack.querySelectorAll('.team-card'));
+
+  originals.forEach((card) => {
+    const clone = card.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('img').forEach((img) => { img.alt = ''; });
+    teamTrack.appendChild(clone);
+  });
+  teamTrack.classList.add('is-carousel');
+
+  const setWidth = () => teamTrack.children[originals.length].offsetLeft - originals[0].offsetLeft;
+  const step = () => originals[0].getBoundingClientRect().width + 24;
+
+  let pos = 0;
+  let paused = false;
+  let resumeTimer = null;
+  let last = null;
+
+  const wrap = () => {
+    const w = setWidth();
+    if (pos >= w) pos -= w;
+    if (pos < 0) pos += w;
   };
-  const updateButtons = () => {
-    const max = teamTrack.scrollWidth - teamTrack.clientWidth - 2;
-    teamPrev.disabled = teamTrack.scrollLeft <= 2;
-    teamNext.disabled = teamTrack.scrollLeft >= max;
+
+  const tick = (now) => {
+    if (last !== null && !paused && !reduceMotion) {
+      pos += SPEED * (now - last) / 1000;
+      wrap();
+      teamTrack.scrollLeft = pos;
+    }
+    last = now;
+    requestAnimationFrame(tick);
   };
-  teamPrev.addEventListener('click', () => teamTrack.scrollBy({ left: -step() }));
-  teamNext.addEventListener('click', () => teamTrack.scrollBy({ left: step() }));
-  teamTrack.addEventListener('scroll', updateButtons, { passive: true });
-  window.addEventListener('resize', updateButtons);
-  updateButtons();
+
+  const pause = () => {
+    paused = true;
+    clearTimeout(resumeTimer);
+  };
+  const resumeSoon = (delay = 2500) => {
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+      pos = teamTrack.scrollLeft;
+      wrap();
+      paused = false;
+    }, delay);
+  };
+
+  teamTrack.addEventListener('mouseenter', pause);
+  teamTrack.addEventListener('mouseleave', () => resumeSoon(800));
+  teamTrack.addEventListener('touchstart', pause, { passive: true });
+  teamTrack.addEventListener('touchend', () => resumeSoon(), { passive: true });
+  teamTrack.addEventListener('focusin', pause);
+  teamTrack.addEventListener('focusout', () => resumeSoon());
+  teamTrack.addEventListener('scroll', () => {
+    // Keep manual scrolling (wheel, swipe) inside the looped range too.
+    if (!paused) return;
+    const w = setWidth();
+    if (teamTrack.scrollLeft >= w) teamTrack.scrollLeft -= w;
+  }, { passive: true });
+
+  const move = (dir) => {
+    pause();
+    pos = teamTrack.scrollLeft;
+    if (dir < 0 && pos < step()) {
+      pos += setWidth();
+      teamTrack.scrollLeft = pos;
+    }
+    teamTrack.scrollBy({ left: dir * step(), behavior: 'smooth' });
+    resumeSoon(4000);
+  };
+  teamPrev.addEventListener('click', () => move(-1));
+  teamNext.addEventListener('click', () => move(1));
+
+  requestAnimationFrame(tick);
 }
