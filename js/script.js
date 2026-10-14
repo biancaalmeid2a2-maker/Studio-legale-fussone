@@ -141,29 +141,28 @@ if (contactForm) {
   });
 }
 
-// Team page: collaborators carousel. Drifts slowly on its own like a shop
-// window and loops forever (the cards are cloned once so the end joins the
-// start). Pauses while the visitor hovers, touches or focuses it; the arrows
-// still move one card at a time.
-const teamTrack = document.getElementById('team-track');
-const teamPrev = document.getElementById('team-prev');
-const teamNext = document.getElementById('team-next');
-
-if (teamTrack && teamPrev && teamNext) {
+// Slow, looping "shop window" carousels (team and Google reviews). The
+// track drifts on its own and loops forever (cards are cloned once so the
+// end joins the start). It pauses while the visitor hovers, touches or
+// focuses it; optional arrow buttons step one card at a time. No autoplay
+// when the visitor prefers reduced motion.
+function initCarousel(track, cardSelector, prevBtn, nextBtn) {
   const SPEED = 30; // px per second
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const originals = Array.from(teamTrack.querySelectorAll('.team-card'));
+  const originals = Array.from(track.querySelectorAll(cardSelector));
+  if (originals.length < 2) return;
 
   originals.forEach((card) => {
     const clone = card.cloneNode(true);
     clone.setAttribute('aria-hidden', 'true');
     clone.querySelectorAll('img').forEach((img) => { img.alt = ''; });
-    teamTrack.appendChild(clone);
+    clone.querySelectorAll('a, button').forEach((el) => { el.tabIndex = -1; });
+    track.appendChild(clone);
   });
-  teamTrack.classList.add('is-carousel');
+  track.classList.add('is-carousel');
 
-  const setWidth = () => teamTrack.children[originals.length].offsetLeft - originals[0].offsetLeft;
-  const step = () => originals[0].getBoundingClientRect().width + 24;
+  const setWidth = () => track.children[originals.length].offsetLeft - originals[0].offsetLeft;
+  const step = () => originals[1].offsetLeft - originals[0].offsetLeft;
 
   let pos = 0;
   let paused = false;
@@ -180,7 +179,7 @@ if (teamTrack && teamPrev && teamNext) {
     if (last !== null && !paused && !reduceMotion) {
       pos += SPEED * (now - last) / 1000;
       wrap();
-      teamTrack.scrollLeft = pos;
+      track.scrollLeft = pos;
     }
     last = now;
     requestAnimationFrame(tick);
@@ -193,37 +192,47 @@ if (teamTrack && teamPrev && teamNext) {
   const resumeSoon = (delay = 2500) => {
     clearTimeout(resumeTimer);
     resumeTimer = setTimeout(() => {
-      pos = teamTrack.scrollLeft;
+      pos = track.scrollLeft;
       wrap();
       paused = false;
     }, delay);
   };
 
-  teamTrack.addEventListener('mouseenter', pause);
-  teamTrack.addEventListener('mouseleave', () => resumeSoon(800));
-  teamTrack.addEventListener('touchstart', pause, { passive: true });
-  teamTrack.addEventListener('touchend', () => resumeSoon(), { passive: true });
-  teamTrack.addEventListener('focusin', pause);
-  teamTrack.addEventListener('focusout', () => resumeSoon());
-  teamTrack.addEventListener('scroll', () => {
+  track.addEventListener('mouseenter', pause);
+  track.addEventListener('mouseleave', () => resumeSoon(800));
+  track.addEventListener('touchstart', pause, { passive: true });
+  track.addEventListener('touchend', () => resumeSoon(), { passive: true });
+  track.addEventListener('focusin', pause);
+  track.addEventListener('focusout', () => resumeSoon());
+  track.addEventListener('scroll', () => {
     // Keep manual scrolling (wheel, swipe) inside the looped range too.
     if (!paused) return;
     const w = setWidth();
-    if (teamTrack.scrollLeft >= w) teamTrack.scrollLeft -= w;
+    if (track.scrollLeft >= w) track.scrollLeft -= w;
   }, { passive: true });
 
   const move = (dir) => {
     pause();
-    pos = teamTrack.scrollLeft;
+    pos = track.scrollLeft;
     if (dir < 0 && pos < step()) {
       pos += setWidth();
-      teamTrack.scrollLeft = pos;
+      track.scrollLeft = pos;
     }
-    teamTrack.scrollBy({ left: dir * step(), behavior: 'smooth' });
+    track.scrollBy({ left: dir * step(), behavior: 'smooth' });
     resumeSoon(4000);
   };
-  teamPrev.addEventListener('click', () => move(-1));
-  teamNext.addEventListener('click', () => move(1));
+  if (prevBtn) prevBtn.addEventListener('click', () => move(-1));
+  if (nextBtn) nextBtn.addEventListener('click', () => move(1));
 
   requestAnimationFrame(tick);
+}
+
+const teamTrack = document.getElementById('team-track');
+if (teamTrack) {
+  initCarousel(teamTrack, '.team-card', document.getElementById('team-prev'), document.getElementById('team-next'));
+}
+
+const reviewsTrack = document.querySelector('.reviews-track');
+if (reviewsTrack) {
+  initCarousel(reviewsTrack, '.review-card', document.getElementById('reviews-prev'), document.getElementById('reviews-next'));
 }
