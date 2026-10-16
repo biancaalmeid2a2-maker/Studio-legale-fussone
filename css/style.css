@@ -703,6 +703,9 @@ a { color: inherit; }
   border-bottom: 0;
 }
 .article td { color: var(--text); }
+.article td:first-child { font-weight: 600; color: var(--ink); }
+.article tbody tr:nth-child(even) td { background: rgba(238, 241, 245, 0.5); }
+.article .table-note { font-size: 0.82rem; color: var(--muted); margin-top: -16px; }
 .article blockquote {
   margin: 24px 0;
   padding: 16px 20px;
