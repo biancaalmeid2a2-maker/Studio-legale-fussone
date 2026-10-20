@@ -675,6 +675,7 @@ a { color: inherit; }
 .article-meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
 .article h1 { margin-bottom: 0.3em; }
 .article h2 { font-size: 1.35rem; margin-top: 1.6em; }
+.article h3 { font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; color: var(--ink); margin: 1.4em 0 0.4em; }
 .article p, .article li { color: var(--text); font-size: 1.02rem; }
 .article table {
   width: 100%;
