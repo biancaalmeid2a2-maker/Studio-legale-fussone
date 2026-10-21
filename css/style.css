@@ -715,6 +715,10 @@ a { color: inherit; }
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 .article blockquote p { margin: 0; }
+.article blockquote.letter-template { font-size: 0.95rem; }
+.article blockquote.letter-template p + p { margin-top: 0.8em; }
+.article .compare-table td { width: 50%; }
+.article .compare-table td:first-child { font-weight: 400; color: var(--text); }
 .article sup { font-size: 0.7em; color: var(--steel); }
 .article ol li { margin-bottom: 8px; }
 .article a:not(.btn) { color: var(--ink); }
