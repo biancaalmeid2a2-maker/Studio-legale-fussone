@@ -16,14 +16,33 @@ mainNav.querySelectorAll('a').forEach((link) => {
   });
 });
 
-// Google Maps embed: load only after consent, since it can set third-party
-// cookies. Consent is remembered in localStorage (not a cookie).
+// Consent: Google Maps and Google Analytics load only after the visitor
+// accepts the cookie banner. The choice is remembered in localStorage
+// (not a cookie). The banner is in index.html; on other pages it is added
+// here so every page asks before measuring.
+const GA_ID = 'G-7399NWEJK5';
 const mapEmbed = document.getElementById('map-embed');
 const mapConsentAccept = document.getElementById('map-consent-accept');
-const cookieBanner = document.getElementById('cookie-banner');
-const cookieAccept = document.getElementById('cookie-accept');
-const cookieReject = document.getElementById('cookie-reject');
 const MAP_SRC = 'https://www.google.com/maps?q=Via+San+Giovanni+Bosco+41+93017+San+Cataldo+CL&output=embed';
+
+function ensureCookieBanner() {
+  let banner = document.getElementById('cookie-banner');
+  if (banner) return banner;
+  banner = document.createElement('div');
+  banner.className = 'cookie-banner';
+  banner.id = 'cookie-banner';
+  banner.hidden = true;
+  banner.innerHTML =
+    '<div class="container cookie-banner-inner">' +
+      '<p>Con il tuo consenso usiamo Google Analytics per statistiche aggregate sulle visite e carichiamo la mappa di Google Maps; entrambi possono comportare cookie di terze parti. Il sito non utilizza cookie di profilazione. <a href="/privacy.html">Maggiori informazioni</a>.</p>' +
+      '<div class="cookie-banner-actions">' +
+        '<button type="button" class="btn btn-outline-dark btn-pill btn-small" id="cookie-reject">Rifiuta</button>' +
+        '<button type="button" class="btn btn-on-dark btn-pill btn-small" id="cookie-accept">Accetta</button>' +
+      '</div>' +
+    '</div>';
+  document.body.insertBefore(banner, document.body.firstChild);
+  return banner;
+}
 
 function loadMap() {
   if (!mapEmbed || mapEmbed.querySelector('iframe')) return;
@@ -39,40 +58,57 @@ function loadMap() {
   mapEmbed.appendChild(iframe);
 }
 
-if (mapEmbed) {
-  let storedConsent = null;
-  try { storedConsent = localStorage.getItem('cookie-consent'); } catch (err) {}
+let analyticsLoaded = false;
+function loadAnalytics() {
+  if (analyticsLoaded || !GA_ID) return;
+  analyticsLoaded = true;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', GA_ID, { anonymize_ip: true });
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+  document.head.appendChild(s);
+}
 
-  if (storedConsent === 'accepted') {
-    loadMap();
-  } else if (storedConsent !== 'rejected' && cookieBanner) {
-    cookieBanner.hidden = false;
-    document.body.classList.add('cookie-banner-visible');
-  }
+function grantConsent() {
+  loadMap();
+  loadAnalytics();
+}
 
-  if (mapConsentAccept) {
-    mapConsentAccept.addEventListener('click', () => {
-      loadMap();
-      try { localStorage.setItem('cookie-consent', 'accepted'); } catch (err) {}
-      if (cookieBanner) cookieBanner.hidden = true;
-      document.body.classList.remove('cookie-banner-visible');
-    });
-  }
-  if (cookieAccept) {
-    cookieAccept.addEventListener('click', () => {
-      loadMap();
-      try { localStorage.setItem('cookie-consent', 'accepted'); } catch (err) {}
-      cookieBanner.hidden = true;
-      document.body.classList.remove('cookie-banner-visible');
-    });
-  }
-  if (cookieReject) {
-    cookieReject.addEventListener('click', () => {
-      try { localStorage.setItem('cookie-consent', 'rejected'); } catch (err) {}
-      cookieBanner.hidden = true;
-      document.body.classList.remove('cookie-banner-visible');
-    });
-  }
+const cookieBanner = ensureCookieBanner();
+const cookieAccept = document.getElementById('cookie-accept');
+const cookieReject = document.getElementById('cookie-reject');
+
+function hideBanner() {
+  if (cookieBanner) cookieBanner.hidden = true;
+  document.body.classList.remove('cookie-banner-visible');
+}
+
+let storedConsent = null;
+try { storedConsent = localStorage.getItem('cookie-consent'); } catch (err) {}
+
+if (storedConsent === 'accepted') {
+  grantConsent();
+} else if (storedConsent !== 'rejected' && cookieBanner) {
+  cookieBanner.hidden = false;
+  document.body.classList.add('cookie-banner-visible');
+}
+
+function acceptAll() {
+  grantConsent();
+  try { localStorage.setItem('cookie-consent', 'accepted'); } catch (err) {}
+  hideBanner();
+}
+
+if (mapConsentAccept) mapConsentAccept.addEventListener('click', acceptAll);
+if (cookieAccept) cookieAccept.addEventListener('click', acceptAll);
+if (cookieReject) {
+  cookieReject.addEventListener('click', () => {
+    try { localStorage.setItem('cookie-consent', 'rejected'); } catch (err) {}
+    hideBanner();
+  });
 }
 
 // Contact form: send a background copy to the studio's inbox, then hand the
