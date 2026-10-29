@@ -43,6 +43,7 @@ Sono esonerati da questo adempimento, tra gli altri, i titolari di permesso di s
 
 L'articolo 6 della Legge n. 91/1992 esclude l'acquisto della cittadinanza in caso di:
 
+- condanna per uno dei delitti contro la personalità dello Stato previsti dal libro II, titolo I, capi I, II e III del codice penale;
 - condanna per un delitto non colposo per il quale la legge prevede una pena edittale non inferiore nel massimo a tre anni di reclusione;
 - condanna da parte di un'autorità giudiziaria straniera a una pena superiore a un anno per un reato non politico, con sentenza riconosciuta in Italia;
 - sussistenza di comprovati motivi inerenti alla sicurezza della Repubblica.
@@ -56,7 +57,7 @@ L'elenco può variare leggermente a seconda dell'ufficio competente (Prefettura 
 - estratto dell'atto di nascita del richiedente, legalizzato o apostillato e tradotto in italiano;
 - certificato penale del Paese di origine e degli eventuali Paesi di residenza, legalizzato o apostillato e tradotto;
 - certificazione di conoscenza della lingua italiana di livello B1, salvo esonero;
-- ricevuta del contributo di 250 euro previsto dalla Legge n. 94/2009;
+- ricevuta del contributo di 250 euro, introdotto dalla Legge n. 94/2009 e aumentato dal D.L. n. 113/2018;
 - marca da bollo da 16 euro;
 - documento di identità in corso di validità e, per chi risiede in Italia, titolo di soggiorno.
 
