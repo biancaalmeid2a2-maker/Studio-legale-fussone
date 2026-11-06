@@ -1,0 +1,27 @@
+# Rebuilds the site on weekdays around 18:00 (Italian time) so that blog posts
+# scheduled with `date` + `time` in content/blog go live on their own.
+# The empty commit is a push to the branch Netlify deploys, which starts a new build.
+# Two times in UTC cover both winter (CET) and summer (CEST) time.
+name: Pubblica articoli programmati
+
+on:
+  schedule:
+    - cron: "0 16,17 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/studio-legale-fussone-landing-y5u3yt
+      - name: Avvia una nuova pubblicazione su Netlify
+        run: |
+          git config user.name "Pubblicazione automatica"
+          git config user.email "actions@users.noreply.github.com"
+          git commit --allow-empty -m "Pubblicazione programmata del blog ($(TZ=Europe/Rome date '+%Y-%m-%d %H:%M'))"
+          git push origin HEAD:claude/studio-legale-fussone-landing-y5u3yt

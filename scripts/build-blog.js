@@ -147,12 +147,46 @@ function formatDateIt(isoDate) {
   return `${d} ${months[m - 1]} ${y}`;
 }
 
+// Publication moment of a post: its `date` plus the optional `time` (HH:MM),
+// read as Italian time (Europe/Rome). Posts whose moment is still in the future
+// are left out of the build; the scheduled workflow in .github/workflows rebuilds
+// the site every weekday at 18:00, so they go live on their own.
+function romeOffsetMinutes(utcMs) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Europe/Rome', hourCycle: 'h23',
+    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+  }).formatToParts(new Date(utcMs)).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+  const asUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute);
+  return Math.round((asUtc - utcMs) / 60000);
+}
+
+function publishTime(post) {
+  const [y, m, d] = post.date.split('-').map(Number);
+  const [hh, mm] = (post.time || '00:00').split(':').map(Number);
+  const naive = Date.UTC(y, m - 1, d, hh, mm);
+  return naive - romeOffsetMinutes(naive) * 60000;
+}
+
 function loadPosts() {
   if (!fs.existsSync(CONTENT_DIR)) return [];
-  return fs.readdirSync(CONTENT_DIR)
+  const now = Date.now();
+  const all = fs.readdirSync(CONTENT_DIR)
     .filter((f) => f.endsWith('.md'))
-    .map((f) => parsePost(fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8'), f))
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+    .map((f) => parsePost(fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8'), f));
+  const scheduled = all.filter((p) => publishTime(p) > now);
+  scheduled.forEach((p) => console.log(`Programmato (non ancora pubblicato): ${p.slug} — ${p.date} ${p.time || '00:00'}`));
+  return all
+    .filter((p) => publishTime(p) <= now)
+    .sort((a, b) => publishTime(b) - publishTime(a));
+}
+
+function removeUnpublishedPages(posts) {
+  // a page generated earlier for a post that is now scheduled again must not stay online
+  const live = new Set(posts.map((p) => `${p.slug}.html`));
+  const sources = new Set(fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.md')).map((f) => f.replace(/\.md$/, '.html')));
+  fs.readdirSync(BLOG_DIR)
+    .filter((f) => f.endsWith('.html') && f !== 'index.html' && sources.has(f) && !live.has(f))
+    .forEach((f) => fs.unlinkSync(path.join(BLOG_DIR, f)));
 }
 
 function renderArticlePage(post) {
@@ -333,6 +367,7 @@ function main() {
   posts.forEach((post) => {
     fs.writeFileSync(path.join(BLOG_DIR, `${post.slug}.html`), renderArticlePage(post));
   });
+  removeUnpublishedPages(posts);
   fs.writeFileSync(path.join(BLOG_DIR, 'index.html'), renderBlogIndex(posts));
   updateHomepageTeaser(posts);
   updateSitemap(posts);
