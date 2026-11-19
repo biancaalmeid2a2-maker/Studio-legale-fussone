@@ -1,16 +1,21 @@
-# Rebuilds the site on weekdays around 18:00 (Italian time) so that blog posts
-# scheduled with `date` + `time` in content/blog go live on their own.
-# The empty commit is a push to the branch Netlify deploys, which starts a new build.
-# Two times in UTC cover both winter (CET) and summer (CEST) time.
+# Publishes blog posts scheduled with `date` + `time` in content/blog.
+# GitHub often runs scheduled workflows late or skips them, so this runs every
+# 15 minutes in the late afternoon/evening on weekdays and only triggers a
+# Netlify build (empty commit on the deploy branch) when a post that is due
+# is not yet online. Times are UTC and cover both CET and CEST.
 name: Pubblica articoli programmati
 
 on:
   schedule:
-    - cron: "0 16,17 * * 1-5"
+    - cron: "4,19,34,49 15-21 * * 1-5"
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: pubblicazione-blog
+  cancel-in-progress: false
 
 jobs:
   rebuild:
@@ -19,7 +24,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: claude/studio-legale-fussone-landing-y5u3yt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Controlla se ci sono articoli da pubblicare
+        id: check
+        run: |
+          MISSING=$(node scripts/check-due-posts.js)
+          echo "Articoli scaduti non ancora online: ${MISSING:-nessuno}"
+          if [ -n "$MISSING" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "build=yes" >> "$GITHUB_OUTPUT"
+          fi
       - name: Avvia una nuova pubblicazione su Netlify
+        if: steps.check.outputs.build == 'yes'
         run: |
           git config user.name "Pubblicazione automatica"
           git config user.email "actions@users.noreply.github.com"
