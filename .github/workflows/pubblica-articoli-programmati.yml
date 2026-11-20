@@ -32,7 +32,7 @@ jobs:
         run: |
           MISSING=$(node scripts/check-due-posts.js)
           echo "Articoli scaduti non ancora online: ${MISSING:-nessuno}"
-          if [ -n "$MISSING" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ -n "$MISSING" ]; then
             echo "build=yes" >> "$GITHUB_OUTPUT"
           fi
       - name: Avvia una nuova pubblicazione su Netlify
